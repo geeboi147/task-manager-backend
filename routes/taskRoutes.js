@@ -117,12 +117,18 @@ router.post('/upload-profile-picture', verifyToken, upload.single('file'), async
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
+    // Check for valid image types
+    if (!req.file.mimetype.startsWith('image/')) {
+      return res.status(400).json({ message: 'Invalid file type. Only images are allowed.' });
+    }
+
     // Prepare the image data to save in MongoDB
     const imageData = {
       data: req.file.buffer,
       contentType: req.file.mimetype,
     };
 
+    // Update the user profile with the new image
     const updatedUser = await User.findByIdAndUpdate(
       req.userId,
       { profilePicture: imageData },
@@ -135,7 +141,7 @@ router.post('/upload-profile-picture', verifyToken, upload.single('file'), async
 
     res.status(200).json({
       message: 'Profile picture uploaded successfully',
-      profilePicture: updatedUser.profilePicture,
+      profilePicture: updatedUser.profilePicture, // Return the profile picture data
     });
   } catch (err) {
     handleError(res, err, 'Error uploading profile picture');
