@@ -122,5 +122,6 @@ app.use((req, res) => {
 // **Server Listener**
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  const renderUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+  console.log(`Server running at ${renderUrl}`);
 });
